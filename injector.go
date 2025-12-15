@@ -939,7 +939,11 @@ func assertValidState(injector *Injector) (err error) {
 }
 
 func get(injector *Injector, key contracts.KeyType, scoped *[]contracts.ScopedInstance) (returnValue any, err error) {
-	info, _ := injector.library.Find(key, search.Reorder)
+	info, found := injector.library.Find(key, search.Reorder)
+	if !found {
+		return nil, fmt.Errorf("%w: type '%s'", ErrorNotRegistered, key.Name())
+	}
+
 	switch info.Lifecycle {
 	case contracts.Scope:
 		for _, scopedItem := range *scoped {

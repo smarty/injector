@@ -87,6 +87,18 @@ func (this *InjectorFixture) TestNotRegistered() {
 	this.So(err.Error(), should.ContainSubstring, "Driver")
 }
 
+func (this *InjectorFixture) TestGetUnregisteredType_ReturnsErrorNotRegistered() {
+	di := New()
+
+	err := Verify(di)
+	this.So(err, should.BeNil)
+
+	_, getErr := Get[Driver](di)
+	this.So(getErr, should.NotBeNil)
+	this.So(getErr, should.Wrap, ErrorNotRegistered)
+	this.So(getErr.Error(), should.ContainSubstring, "Driver")
+}
+
 func (this *InjectorFixture) TestNotAStructOrInterface() {
 	di := New()
 	err := RegisterSingleton[int](di, NewRegularCar)
